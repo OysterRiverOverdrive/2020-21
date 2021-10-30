@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.PWMTalonSRX;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer; // ashish added
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -48,6 +49,8 @@ public class Robot extends TimedRobot {
   private final Joystick m_action = new Joystick(1);
   private int m_TurretPos = 0;
   private int m_count = 0;
+  private final Timer m_timer = new Timer(); // ashish added
+
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -89,21 +92,35 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+    m_timer.reset();// ashish added
+    m_timer.start();// ashish added
     System.out.println("Auto selected: " + m_autoSelected);
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
+    // ashish commented the switch so as to force this code to run on selecting autonomous.
+    //switch (m_autoSelected) {
+    //case kCustomAuto:
+    // Put custom auto code here
+    // ashish adding code
+    // Drive for 5 seconds
+    System.out.println("inside auto code");
+    if (m_timer.get() < 5.0)
+    {
+      m_robotDrive.arcadeDrive(0.5, 0.0); // drive forwards half speed
+    } else
+    {
+      m_robotDrive.stopMotor(); // stop robot
     }
+    // ashish  add code end
+    //break;  ashish  comemnted
+    //case kDefaultAuto:  ashish  comemnted
+    //default:  ashish  comemnted
+    // Put default auto code here  ashish  comemnted
+    //break;ashish  comemnted
+    // }ashish  comemnted
   }
 
   /** This function is called once when teleop is enabled. */
@@ -112,7 +129,8 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
+  public void teleopPeriodic()
+  {
 
     m_turret.set(0);
     m_robotDrive.arcadeDrive(-.80 * m_action.getY(), .6 * m_stick.getX());
@@ -149,7 +167,7 @@ public class Robot extends TimedRobot {
           e.printStackTrace();
         }
       }
-        m_turret.set(0);
+      m_turret.set(0);
     }
 
     if (m_action.getRawButtonPressed(11)) {
@@ -264,13 +282,13 @@ public class Robot extends TimedRobot {
     }
 
   }
-      
 
 
 
 
 
-    
+
+
 
 
   /** This function is called once when the robot is disabled. */
